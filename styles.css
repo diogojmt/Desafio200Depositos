@@ -1,0 +1,63 @@
+/* Estilo Geral */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Cabeçalho */
+h1 {
+    color: #343a40;
+    margin-top: 20px;
+    font-size: 2.5em;
+    text-align: center;
+}
+
+/* Tabela de Depósitos */
+table {
+    width: 80%;
+    max-width: 600px;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #dee2e6;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
+}
+
+td {
+    width: 10%;
+    height: 60px;
+}
+
+td.selected {
+    background-color: #28a745;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+td:hover {
+    background-color: #f1f1f1;
+}
+
+/* Resumo Financeiro */
+h2 {
+    color: #343a40;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+#total, #mensagem, #dat
