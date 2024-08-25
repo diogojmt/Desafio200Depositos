@@ -19,13 +19,22 @@ h1 {
     text-align: center;
 }
 
+/* Container para rolagem horizontal e centralização */
+.table-container {
+    width: 100%;
+    max-width: 1000px; /* Define um limite de largura para centralizar em telas grandes */
+    overflow-x: auto;
+    margin: 20px auto; /* Centraliza o container */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 /* Tabela de Depósitos */
 table {
-    width: 80%;
-    max-width: 600px;
+    width: 100%;
+    max-width: 1000px;
     border-collapse: collapse;
-    margin: 20px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    min-width: 600px; /* Garante um mínimo para a tabela */
+    margin: 0 auto; /* Centraliza a tabela dentro do container */
 }
 
 th, td {
@@ -60,4 +69,26 @@ h2 {
     margin-bottom: 10px;
 }
 
-#total, #mensagem, #dat
+#total, #mensagem, #data-inicial, #data-final {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    #total, #mensagem, #data-inicial, #data-final {
+        width: 95%;
+    }
+
+    td {
+        padding: 10px;
+        font-size: 1em;
+    }
+}
