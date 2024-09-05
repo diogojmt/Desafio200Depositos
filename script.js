@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             progressoGrafico.destroy(); // Destroi o gráfico anterior antes de recriar
         }
 
+        // Certifique-se de que o gráfico só é recriado se necessário
         progressoGrafico = new Chart(progressoCanvas, {
             type: 'doughnut',
             data: {
@@ -131,6 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 maintainAspectRatio: false,
             }
         });
+
+        console.log("Gráfico de progresso atualizado.");
     }
 
     // Atualizar o histórico de depósitos
