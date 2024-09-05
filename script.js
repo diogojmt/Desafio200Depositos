@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Você não fez nenhum depósito nas últimas 24 horas. Lembre-se de continuar o desafio!");
         }
     }, 3600000); // Verifica a cada hora
-
+	// Inicia a tabela, total, histórico, mensagens e gráfico ao carregar a página
     criarTabela();
     atualizarTotal();
     carregarMensagens(); // Carrega as mensagens do arquivo e exibe uma ao carregar a página

@@ -26,7 +26,8 @@ body.dark-mode {
 }
 
 /* Cabeçalhos no Modo Escuro */
-body.dark-mode h1, body.dark-mode h2 {
+body.dark-mode h1, 
+body.dark-mode h2 {
     color: #ffffff;
 }
 
@@ -159,4 +160,14 @@ body.dark-mode #data-final:hover {
     body.dark-mode td {
         background-color: #444;
     }
+}
+
+/* Canvas para o Gráfico */
+canvas {
+    max-width: 600px;
+    max-height: 400px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
 }
