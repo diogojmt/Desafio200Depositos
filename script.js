@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dataInicialDisplay.textContent = `Data Inicial: ${startDateObj.toLocaleDateString()}`;
     dataFinalDisplay.textContent = `Data Final: ${endDateObj.toLocaleDateString()}`;
 
-    // Função para criar a tabela de depósitos
+    // Função para criar a tabela de depósitos (apenas uma vez)
     function criarTabela() {
         const tabela = document.getElementById('depositos');
         if (!tabela) {
@@ -65,7 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        tabela.innerHTML = ''; // Limpa a tabela antes de recriá-la
+        if (tabela.innerHTML !== '') {
+            // Tabela já criada, evita recriação
+            return;
+        }
 
         console.log("Criando tabela...");
 
@@ -113,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progressoGrafico) {
             progressoGrafico.destroy(); // Destroi o gráfico anterior antes de recriar
         }
-        
+
         progressoGrafico = new Chart(progressoCanvas, {
             type: 'doughnut',
             data: {
