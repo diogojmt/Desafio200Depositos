@@ -3,9 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataInicialDisplay = document.getElementById('data-inicial');
     const dataFinalDisplay = document.getElementById('data-final');
     const mensagemMotivacionalDisplay = document.getElementById('mensagem-motivacional');
+    const historicoDepositos = document.getElementById('historicoDepositos');
     let total = 0;
     let depositos = JSON.parse(localStorage.getItem('depositos')) || [];
     let mensagensMotivacionais = [];
+    let ultimoDeposito = Date.now(); // Para notificações de alerta
+    const progressoCanvas = document.getElementById('progressoGrafico').getContext('2d');
+    let progressoGrafico = null; // Armazenar a instância do gráfico para atualizações
 
     // Função para carregar as mensagens de um arquivo txt
     async function carregarMensagens() {
@@ -33,6 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Função para alternar modo escuro
+    document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+    });
+
     // Verificar se a data inicial já está no localStorage
     let startDate = localStorage.getItem('startDate');
     if (!startDate) {
@@ -48,8 +57,18 @@ document.addEventListener('DOMContentLoaded', () => {
     dataInicialDisplay.textContent = `Data Inicial: ${startDateObj.toLocaleDateString()}`;
     dataFinalDisplay.textContent = `Data Final: ${endDateObj.toLocaleDateString()}`;
 
+    // Função para criar a tabela de depósitos
     function criarTabela() {
         const tabela = document.getElementById('depositos');
+        if (!tabela) {
+            console.error("Tabela não encontrada no HTML.");
+            return;
+        }
+
+        tabela.innerHTML = ''; // Limpa a tabela antes de recriá-la
+
+        console.log("Criando tabela...");
+
         let contador = 1;
 
         for (let i = 0; i < 20; i++) {
@@ -72,6 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         depositos.push(valorClicado); // Adiciona o valor correto
                         localStorage.setItem('depositos', JSON.stringify(depositos));
                         atualizarTotal();
+                        atualizarHistorico();
+                        verificarMarcos();
+                        atualizarGrafico(); // Atualizar o gráfico apenas após novos depósitos
+                        ultimoDeposito = Date.now(); // Atualiza o tempo do último depósito
                     }
                 });
 
@@ -81,12 +104,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tabela.appendChild(row);
         }
+
+        console.log("Tabela criada com sucesso.");
     }
 
+    // Atualizar o gráfico de progresso
+    function atualizarGrafico() {
+        if (progressoGrafico) {
+            progressoGrafico.destroy(); // Destroi o gráfico anterior antes de recriar
+        }
+        
+        progressoGrafico = new Chart(progressoCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Depósitos Realizados', 'Depósitos Restantes'],
+                datasets: [{
+                    data: [depositos.length, 200 - depositos.length],
+                    backgroundColor: ['#28a745', '#e9ecef']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
+    }
+
+    // Atualizar o histórico de depósitos
+    function atualizarHistorico() {
+        historicoDepositos.innerHTML = '';
+        depositos.forEach((deposito, index) => {
+            const li = document.createElement('li');
+            li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.toFixed(2)} - Data: ${new Date().toLocaleDateString()}`;
+            historicoDepositos.appendChild(li);
+        });
+    }
+
+    // Verificar objetivos intermediários
+    function verificarMarcos() {
+        if ([50, 100, 150].includes(depositos.length)) {
+            alert(`Parabéns! Você atingiu o marco de ${depositos.length} depósitos! Continue firme no desafio.`);
+        }
+    }
+
+    // Função para exportar CSV
+    document.getElementById('exportarCSV').addEventListener('click', () => {
+        let csvContent = "data:text/csv;charset=utf-8,Depósito,Data\n";
+        depositos.forEach(deposito => {
+            csvContent += `${deposito},${new Date().toLocaleDateString()}\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "progresso.csv");
+        document.body.appendChild(link); // Necessário para Firefox
+        link.click();
+    });
+
+    // Calcular total de depósitos
     function calcularTotal() {
         total = depositos.reduce((acc, val) => acc + val, 0);
     }
 
+    // Calcular dias restantes
     function calcularDiasRestantes() {
         const hoje = new Date();
         const diasPassados = Math.floor((hoje - startDateObj) / (1000 * 60 * 60 * 24));
@@ -95,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return diasRestantes > 0 ? diasRestantes : 0;
     }
 
+    // Atualizar o total de depósitos e dias restantes
     function atualizarTotal() {
         calcularTotal();
         totalDisplay.textContent = `R$ ${total.toFixed(2)}`;
@@ -103,7 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('mensagem').textContent = mensagem;
     }
 
+    // Notificações de alerta para falta de depósitos
+    setInterval(() => {
+        if (Date.now() - ultimoDeposito > 86400000) { // 24 horas
+            alert("Você não fez nenhum depósito nas últimas 24 horas. Lembre-se de continuar o desafio!");
+        }
+    }, 3600000); // Verifica a cada hora
+
     criarTabela();
     atualizarTotal();
     carregarMensagens(); // Carrega as mensagens do arquivo e exibe uma ao carregar a página
+    atualizarGrafico(); // Atualiza o gráfico inicialmente
+    atualizarHistorico(); // Atualiza o histórico inicialmente
 });

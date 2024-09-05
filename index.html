@@ -5,11 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desafio dos 200 Depósitos</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Referência local ao Chart.js -->
+    <script src="js/chart.umd.js"></script>
+
 </head>
 <body>
     <h1>Desafio dos 200 Depósitos</h1>
 
     <p id="mensagem-motivacional" style="font-size: 1.2em; margin: 20px 0; color: #007bff;"></p>
+
+    <!-- Botão para Alternar o Modo Escuro -->
+    <button id="dark-mode-toggle">Alternar Modo Escuro</button>
+
+    <!-- Gráfico de Progresso -->
+    <h2>Progresso do Desafio</h2>
+    <canvas id="progressoGrafico" width="400" height="200"></canvas>
 
     <div class="table-container">
         <table id="depositos">
@@ -23,6 +33,14 @@
     <p id="data-final"></p>
     <p id="mensagem"></p>
 
+    <!-- Histórico de Depósitos -->
+    <h2>Histórico de Depósitos</h2>
+    <ul id="historicoDepositos"></ul>
+
+    <!-- Botão para Exportar CSV -->
+    <button id="exportarCSV">Exportar Progresso (CSV)</button>
+
+    <!-- Script principal -->
     <script src="script.js"></script>
 </body>
 </html>

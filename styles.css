@@ -19,6 +19,43 @@ h1 {
     text-align: center;
 }
 
+/* Modo Escuro */
+body.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Cabeçalhos no Modo Escuro */
+body.dark-mode h1, body.dark-mode h2 {
+    color: #ffffff;
+}
+
+/* Tabela no Modo Escuro */
+body.dark-mode td {
+    background-color: #555;
+    color: #fff;
+}
+
+body.dark-mode td.selected {
+    background-color: #ff5722;
+}
+
+/* Botão de Modo Escuro */
+#dark-mode-toggle {
+    margin: 15px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#dark-mode-toggle:hover {
+    background-color: #0056b3;
+}
+
 /* Container para rolagem horizontal e centralização */
 .table-container {
     width: 100%;
@@ -33,8 +70,8 @@ table {
     width: 100%;
     max-width: 1000px;
     border-collapse: collapse;
-    min-width: 600px; /* Garante um mínimo para a tabela */
-    margin: 0 auto; /* Centraliza a tabela dentro do container */
+    min-width: 600px;
+    margin: 0 auto;
 }
 
 th, td {
@@ -44,7 +81,7 @@ th, td {
     font-size: 1.2em;
     cursor: pointer;
     background-color: #ffffff;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 td {
@@ -60,6 +97,7 @@ td.selected {
 
 td:hover {
     background-color: #f1f1f1;
+    transition: background-color 0.2s ease;
 }
 
 /* Resumo Financeiro */
@@ -81,6 +119,25 @@ h2 {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Resumo Financeiro no Modo Escuro */
+body.dark-mode #total, 
+body.dark-mode #mensagem, 
+body.dark-mode #data-inicial, 
+body.dark-mode #data-final {
+    background-color: #444; /* Fundo mais escuro */
+    color: #ffffff; /* Texto branco para contraste */
+    border: 1px solid #555; /* Bordas sutis para destacar os campos */
+}
+
+/* Hover para os Elementos no Modo Escuro */
+body.dark-mode #total:hover, 
+body.dark-mode #mensagem:hover, 
+body.dark-mode #data-inicial:hover, 
+body.dark-mode #data-final:hover {
+    background-color: #555; /* Fundo levemente mais claro ao passar o mouse */
+    transition: background-color 0.3s ease;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     #total, #mensagem, #data-inicial, #data-final {
@@ -90,5 +147,16 @@ h2 {
     td {
         padding: 10px;
         font-size: 1em;
+    }
+}
+
+/* Modo Escuro para Responsividade */
+@media (max-width: 768px) {
+    body.dark-mode {
+        background-color: #222;
+    }
+
+    body.dark-mode td {
+        background-color: #444;
     }
 }
