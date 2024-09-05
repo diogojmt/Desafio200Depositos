@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dataInicialDisplay.textContent = `Data Inicial: ${startDateObj.toLocaleDateString()}`;
     dataFinalDisplay.textContent = `Data Final: ${endDateObj.toLocaleDateString()}`;
 
-    // Função para criar a tabela de depósitos (apenas uma vez)
+    // Função para criar a tabela de depósitos
     function criarTabela() {
         const tabela = document.getElementById('depositos');
         if (!tabela) {
@@ -65,14 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (tabela.innerHTML !== '') {
-            // Tabela já criada, evita recriação
-            return;
-        }
-
         console.log("Criando tabela...");
 
         let contador = 1;
+
+        // Limpa a tabela antes de recriá-la, para garantir que será criada corretamente
+        tabela.innerHTML = '';
 
         for (let i = 0; i < 20; i++) {
             const row = document.createElement('tr');
@@ -96,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         atualizarTotal();
                         atualizarHistorico();
                         verificarMarcos();
-                        atualizarGrafico(); // Atualizar o gráfico apenas após novos depósitos
+                        atualizarGrafico(); // Atualizar o gráfico após novos depósitos
                         ultimoDeposito = Date.now(); // Atualiza o tempo do último depósito
                     }
                 });
@@ -117,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
             progressoGrafico.destroy(); // Destroi o gráfico anterior antes de recriar
         }
 
-        // Certifique-se de que o gráfico só é recriado se necessário
         progressoGrafico = new Chart(progressoCanvas, {
             type: 'doughnut',
             data: {
@@ -196,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Você não fez nenhum depósito nas últimas 24 horas. Lembre-se de continuar o desafio!");
         }
     }, 3600000); // Verifica a cada hora
-	// Inicia a tabela, total, histórico, mensagens e gráfico ao carregar a página
+
     criarTabela();
     atualizarTotal();
     carregarMensagens(); // Carrega as mensagens do arquivo e exibe uma ao carregar a página
