@@ -189,15 +189,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	function atualizarHistorico() {
 		historicoDepositos.innerHTML = '';
 		depositos.forEach((deposito, index) => {
-			// Verificar se o valor está definido e é numérico
-			if (deposito.valor !== undefined && !isNaN(deposito.valor)) {
+			const li = document.createElement('li');
+			
+			// Verificar se a data do depósito existe
+			if (deposito.data) {
 				const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
-				const li = document.createElement('li');
 				li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
-				historicoDepositos.appendChild(li);
 			} else {
-				console.error(`Valor de depósito inválido no índice ${index}:`, deposito);
+				// Caso a data não esteja presente
+				li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data não disponível`;
 			}
+			
+			historicoDepositos.appendChild(li);
 		});
 	}
 
