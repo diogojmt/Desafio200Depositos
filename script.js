@@ -5,9 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const mensagemMotivacionalDisplay = document.getElementById('mensagem-motivacional');
     const historicoDepositos = document.getElementById('historicoDepositos');
     let total = 0;
+    
+    // Cada depósito agora inclui valor e data
     let depositos = JSON.parse(localStorage.getItem('depositos')) || [];
     let mensagensMotivacionais = [];
-    let ultimoDeposito = Date.now(); // Para notificações de alerta
+    let ultimoDeposito = Date.now();
     const progressoCanvas = document.getElementById('progressoGrafico').getContext('2d');
     let progressoGrafico = null; // Armazenar a instância do gráfico para atualizações
 
@@ -128,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cell.dataset.value = contador;  // Certificando que o valor correto está sendo atribuído
 
                 // Verifica se o depósito já foi feito para essa célula
-                if (depositos.includes(contador)) {
+                if (depositos.find(d => d.valor === contador)) {
                     cell.classList.add('selected');
                 }
 
@@ -136,7 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const valorClicado = parseInt(cell.dataset.value, 10); // Garante que estamos usando o valor correto
                     if (!cell.classList.contains('selected')) {
                         cell.classList.add('selected');
-                        depositos.push(valorClicado); // Adiciona o valor correto
+
+                        // Armazenar o valor e a data do depósito
+                        depositos.push({ valor: valorClicado, data: new Date().toISOString() });
                         console.log(`Depósito feito: ${valorClicado}, Total de depósitos: ${depositos.length}`);
                         localStorage.setItem('depositos', JSON.stringify(depositos));
                         atualizarTotal();
@@ -181,12 +185,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Gráfico de progresso atualizado.");
     }
 
-    // Atualizar o histórico de depósitos
+    // Atualizar o histórico de depósitos com a data correta
     function atualizarHistorico() {
         historicoDepositos.innerHTML = '';
         depositos.forEach((deposito, index) => {
+            const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
             const li = document.createElement('li');
-            li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.toFixed(2)} - Data: ${new Date().toLocaleDateString()}`;
+            li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
             historicoDepositos.appendChild(li);
         });
     }
@@ -202,7 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('exportarCSV').addEventListener('click', () => {
         let csvContent = "data:text/csv;charset=utf-8,Depósito,Data\n";
         depositos.forEach(deposito => {
-            csvContent += `${deposito},${new Date().toLocaleDateString()}\n`;
+            const dataDeposito = new Date(deposito.data).toLocaleDateString();
+            csvContent += `${deposito.valor},${dataDeposito}\n`;
         });
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
@@ -214,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Calcular total de depósitos
     function calcularTotal() {
-        total = depositos.reduce((acc, val) => acc + val, 0);
+        total = depositos.reduce((acc, deposito) => acc + deposito.valor, 0);
     }
 
     // Calcular dias restantes
