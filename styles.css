@@ -88,6 +88,28 @@ body.dark-mode .probabilidade-visual {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Sugestões de Depósitos */
+#sugestoesDepositos {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 8px;
+    list-style-type: none;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+#sugestoesDepositos li {
+    padding: 5px;
+    margin: 5px 0;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#sugestoesDepositos li:hover {
+    background-color: #ddd;
+}
+
 /* Tabela de Depósitos */
 table {
     width: 100%;
