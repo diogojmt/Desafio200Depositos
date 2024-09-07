@@ -11,19 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let mensagensMotivacionais = [];
     let ultimoDeposito = Date.now();
     const progressoCanvas = document.getElementById('progressoGrafico').getContext('2d');
-    let progressoGrafico = null; // Armazenar a instância do gráfico para atualizações
+    let progressoGrafico = null;
 
     // Calcular probabilidade de atingir o objetivo
     function calcularProbabilidade() {
-        console.log("Calculando probabilidade...");
-
         const diasRestantes = calcularDiasRestantes();
         const depositosRestantes = 200 - depositos.length;
 
-        console.log(`Depósitos: ${depositos.length}, Dias Restantes: ${diasRestantes}, Depósitos Restantes: ${depositosRestantes}`);
-
         if (diasRestantes <= 0) {
-            console.log("Dias restantes é zero ou negativo. Probabilidade de sucesso: 0%");
             document.getElementById('probabilidade').textContent = "Probabilidade de Sucesso: 0%";
             return;
         }
@@ -32,17 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const diasPassados = Math.floor((new Date() - startDateObj) / (1000 * 60 * 60 * 24));
         const taxaAtual = diasPassados > 0 ? depositos.length / diasPassados : 0;
 
-        console.log(`Taxa Atual: ${taxaAtual}, Taxa Necessária: ${taxaNecessaria}`);
-
         let probabilidade = 0;
-
         if (taxaAtual >= taxaNecessaria) {
-            probabilidade = 100; // Alta probabilidade de sucesso
+            probabilidade = 100;
         } else {
             probabilidade = Math.min((taxaAtual / taxaNecessaria) * 100, 100);
         }
-
-        console.log(`Probabilidade calculada: ${probabilidade}%`);
 
         document.getElementById('probabilidade').textContent = `Probabilidade de Sucesso: ${probabilidade.toFixed(2)}%`;
     }
@@ -54,25 +44,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const diasRestantes = calcularDiasRestantes();
         const mensagem = `Faltam ${diasRestantes} dias para terminar o desafio e você já realizou ${depositos.length} depósitos totalizando R$ ${total.toFixed(2)}.`;
         document.getElementById('mensagem').textContent = mensagem;
-
-        calcularProbabilidade(); // Atualizar probabilidade
+        calcularProbabilidade();
     }
 
     // Função para carregar as mensagens de um arquivo txt
-    async function carregarMensagens() {
-        try {
-            const response = await fetch('mensagens.txt');
-            if (!response.ok) {
-                throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
-            }
-            const data = await response.text();
-            mensagensMotivacionais = data.split('\n').filter(mensagem => mensagem.trim() !== '');
-            exibirMensagemMotivacional(); // Exibe a mensagem motivacional após carregar as mensagens
-        } catch (error) {
-            console.error('Erro ao carregar as mensagens:', error);
-            mensagemMotivacionalDisplay.textContent = "Erro ao carregar mensagens motivacionais.";
-        }
-    }
+	async function carregarMensagens() {
+		try {
+			const response = await fetch('mensagens.txt');
+			if (!response.ok) throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
+			
+			const data = await response.text();
+			mensagensMotivacionais = data.split('\n').filter(mensagem => mensagem.trim() !== '');
+			exibirMensagemMotivacional();
+		} catch (error) {
+			console.error('Erro ao carregar as mensagens:', error);
+			mensagemMotivacionalDisplay.textContent = "Nenhuma mensagem motivacional disponível.";
+		}
+	}
 
     // Exibir uma mensagem motivacional aleatória
     function exibirMensagemMotivacional() {
@@ -92,17 +80,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Verificar se a data inicial já está no localStorage
     let startDate = localStorage.getItem('startDate');
     if (!startDate) {
-        startDate = new Date().toISOString().split('T')[0]; // Salva a data de hoje como a data inicial
+        startDate = new Date().toISOString().split('T')[0];
         localStorage.setItem('startDate', startDate);
     }
 
     const startDateObj = new Date(startDate);
-    console.log(`Data inicial: ${startDateObj}`);  // Verificar se a data inicial está correta
-
     const endDateObj = new Date(startDateObj);
     endDateObj.setDate(startDateObj.getDate() + 365);
 
-    // Atualizar as exibições das datas
     dataInicialDisplay.textContent = `Data Inicial: ${startDateObj.toLocaleDateString()}`;
     dataFinalDisplay.textContent = `Data Final: ${endDateObj.toLocaleDateString()}`;
 
@@ -114,58 +99,44 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        console.log("Criando tabela...");
-
-        let contador = 1;
-
-        // Limpa a tabela antes de recriá-la, para garantir que será criada corretamente
         tabela.innerHTML = '';
+        let contador = 1;
 
         for (let i = 0; i < 20; i++) {
             const row = document.createElement('tr');
-
             for (let j = 0; j < 10; j++) {
                 const cell = document.createElement('td');
                 cell.textContent = contador;
-                cell.dataset.value = contador;  // Certificando que o valor correto está sendo atribuído
+                cell.dataset.value = contador;
 
-                // Verifica se o depósito já foi feito para essa célula
                 if (depositos.find(d => d.valor === contador)) {
                     cell.classList.add('selected');
                 }
 
                 cell.addEventListener('click', () => {
-                    const valorClicado = parseInt(cell.dataset.value, 10); // Garante que estamos usando o valor correto
+                    const valorClicado = parseInt(cell.dataset.value, 10);
                     if (!cell.classList.contains('selected')) {
                         cell.classList.add('selected');
-
-                        // Armazenar o valor e a data do depósito
                         depositos.push({ valor: valorClicado, data: new Date().toISOString() });
-                        console.log(`Depósito feito: ${valorClicado}, Total de depósitos: ${depositos.length}`);
                         localStorage.setItem('depositos', JSON.stringify(depositos));
                         atualizarTotal();
                         atualizarHistorico();
                         verificarMarcos();
-                        atualizarGrafico(); // Atualizar o gráfico após novos depósitos
-                        ultimoDeposito = Date.now(); // Atualiza o tempo do último depósito
+                        atualizarGrafico();
+                        ultimoDeposito = Date.now();
                     }
                 });
 
                 row.appendChild(cell);
                 contador++;
             }
-
             tabela.appendChild(row);
         }
-
-        console.log("Tabela criada com sucesso.");
     }
 
     // Atualizar o gráfico de progresso
     function atualizarGrafico() {
-        if (progressoGrafico) {
-            progressoGrafico.destroy(); // Destroi o gráfico anterior antes de recriar
-        }
+        if (progressoGrafico) progressoGrafico.destroy();
 
         progressoGrafico = new Chart(progressoCanvas, {
             type: 'doughnut',
@@ -181,8 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 maintainAspectRatio: false,
             }
         });
-
-        console.log("Gráfico de progresso atualizado.");
     }
 
     // Atualizar o histórico de depósitos com a data correta
@@ -191,13 +160,18 @@ document.addEventListener('DOMContentLoaded', () => {
 		depositos.forEach((deposito, index) => {
 			const li = document.createElement('li');
 			
-			// Verificar se a data do depósito existe
-			if (deposito.data) {
-				const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
-				li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
+			// Verificar se o valor do depósito existe
+			if (deposito.valor && !isNaN(deposito.valor)) {
+				// Verificar se a data do depósito existe
+				if (deposito.data) {
+					const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
+					li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
+				} else {
+					// Caso a data não esteja presente
+					li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data não disponível`;
+				}
 			} else {
-				// Caso a data não esteja presente
-				li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data não disponível`;
+				li.textContent = `Depósito ${index + 1}: Valor inválido`;
 			}
 			
 			historicoDepositos.appendChild(li);
@@ -222,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
         link.setAttribute("download", "progresso.csv");
-        document.body.appendChild(link); // Necessário para Firefox
+        document.body.appendChild(link);
         link.click();
     });
 
@@ -235,21 +209,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function calcularDiasRestantes() {
         const hoje = new Date();
         const diasPassados = Math.floor((hoje - startDateObj) / (1000 * 60 * 60 * 24));
-        const diasRestantes = 365 - diasPassados;
-
-        return diasRestantes > 0 ? diasRestantes : 0;
+        return 365 - diasPassados;
     }
 
-    // Notificações de alerta para falta de depósitos
+    // Notificações de alerta
     setInterval(() => {
-        if (Date.now() - ultimoDeposito > 86400000) { // 24 horas
+        if (Date.now() - ultimoDeposito > 86400000) {
             alert("Você não fez nenhum depósito nas últimas 24 horas. Lembre-se de continuar o desafio!");
         }
-    }, 3600000); // Verifica a cada hora
+    }, 3600000);
 
     criarTabela();
     atualizarTotal();
-    carregarMensagens(); // Carrega as mensagens do arquivo e exibe uma ao carregar a página
-    atualizarGrafico(); // Atualiza o gráfico inicialmente
-    atualizarHistorico(); // Atualiza o histórico inicialmente
+    carregarMensagens();
+    atualizarGrafico();
+    atualizarHistorico();
 });
