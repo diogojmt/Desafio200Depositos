@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`Depósitos: ${depositos.length}, Dias Restantes: ${diasRestantes}, Depósitos Restantes: ${depositosRestantes}`);
 
         if (diasRestantes <= 0) {
+            console.log("Dias restantes é zero ou negativo. Probabilidade de sucesso: 0%");
             document.getElementById('probabilidade').textContent = "Probabilidade de Sucesso: 0%";
             return;
         }
@@ -44,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('probabilidade').textContent = `Probabilidade de Sucesso: ${probabilidade.toFixed(2)}%`;
     }
 
-    // Atualizar probabilidade junto com o total e o gráfico
+    // Função para atualizar o total de depósitos e dias restantes
     function atualizarTotal() {
         calcularTotal();
         totalDisplay.textContent = `R$ ${total.toFixed(2)}`;
@@ -136,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!cell.classList.contains('selected')) {
                         cell.classList.add('selected');
                         depositos.push(valorClicado); // Adiciona o valor correto
+                        console.log(`Depósito feito: ${valorClicado}, Total de depósitos: ${depositos.length}`);
                         localStorage.setItem('depositos', JSON.stringify(depositos));
                         atualizarTotal();
                         atualizarHistorico();
@@ -222,15 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const diasRestantes = 365 - diasPassados;
 
         return diasRestantes > 0 ? diasRestantes : 0;
-    }
-
-    // Atualizar o total de depósitos e dias restantes
-    function atualizarTotal() {
-        calcularTotal();
-        totalDisplay.textContent = `R$ ${total.toFixed(2)}`;
-        const diasRestantes = calcularDiasRestantes();
-        const mensagem = `Faltam ${diasRestantes} dias para terminar o desafio e você já realizou ${depositos.length} depósitos totalizando R$ ${total.toFixed(2)}.`;
-        document.getElementById('mensagem').textContent = mensagem;
     }
 
     // Notificações de alerta para falta de depósitos

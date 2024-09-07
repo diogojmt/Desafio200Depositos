@@ -41,28 +41,50 @@ body.dark-mode td.selected {
     background-color: #ff5722;
 }
 
-/* Botão de Modo Escuro */
+/* Botão de Modo Escuro (Mais Discreto) */
 #dark-mode-toggle {
     margin: 15px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
+    padding: 5px 10px;
+    background-color: #ccc; /* Cor discreta */
+    color: #333;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
 }
 
 #dark-mode-toggle:hover {
-    background-color: #0056b3;
+    background-color: #bbb;
+}
+
+/* Estilo da Probabilidade (Mais Atraente) */
+.probabilidade-visual {
+    font-size: 1.5em;
+    color: #28a745;
+    font-weight: bold;
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px 0;
+}
+
+/* Probabilidade no Modo Escuro */
+body.dark-mode .probabilidade-visual {
+    background-color: #444;
+    color: #28a745;
 }
 
 /* Container para rolagem horizontal e centralização */
 .table-container {
     width: 100%;
-    max-width: 1000px; /* Define um limite de largura para centralizar em telas grandes */
+    max-width: 1000px;
     overflow-x: auto;
-    margin: 20px auto; /* Centraliza o container */
+    margin: 20px auto;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -101,44 +123,6 @@ td:hover {
     transition: background-color 0.2s ease;
 }
 
-/* Resumo Financeiro */
-h2 {
-    color: #343a40;
-    font-size: 2em;
-    margin-bottom: 10px;
-}
-
-#total, #mensagem, #data-inicial, #data-final {
-    font-size: 1.2em;
-    margin-bottom: 15px;
-    padding: 10px 15px;
-    background-color: #e9ecef;
-    border-radius: 5px;
-    width: 80%;
-    max-width: 600px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Resumo Financeiro no Modo Escuro */
-body.dark-mode #total, 
-body.dark-mode #mensagem, 
-body.dark-mode #data-inicial, 
-body.dark-mode #data-final {
-    background-color: #444; /* Fundo mais escuro */
-    color: #ffffff; /* Texto branco para contraste */
-    border: 1px solid #555; /* Bordas sutis para destacar os campos */
-}
-
-/* Hover para os Elementos no Modo Escuro */
-body.dark-mode #total:hover, 
-body.dark-mode #mensagem:hover, 
-body.dark-mode #data-inicial:hover, 
-body.dark-mode #data-final:hover {
-    background-color: #555; /* Fundo levemente mais claro ao passar o mouse */
-    transition: background-color 0.3s ease;
-}
-
 /* Responsividade */
 @media (max-width: 768px) {
     #total, #mensagem, #data-inicial, #data-final {
@@ -148,17 +132,6 @@ body.dark-mode #data-final:hover {
     td {
         padding: 10px;
         font-size: 1em;
-    }
-}
-
-/* Modo Escuro para Responsividade */
-@media (max-width: 768px) {
-    body.dark-mode {
-        background-color: #222;
-    }
-
-    body.dark-mode td {
-        background-color: #444;
     }
 }
 
