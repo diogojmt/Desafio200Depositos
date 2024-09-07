@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataFinalDisplay = document.getElementById('data-final');
     const mensagemMotivacionalDisplay = document.getElementById('mensagem-motivacional');
     const historicoDepositos = document.getElementById('historicoDepositos');
+    const sugestoesDepositos = document.getElementById('sugestoesDepositos');
     let total = 0;
     
     // Cada depósito agora inclui valor e data
@@ -48,19 +49,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Função para carregar as mensagens de um arquivo txt
-	async function carregarMensagens() {
-		try {
-			const response = await fetch('mensagens.txt');
-			if (!response.ok) throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
-			
-			const data = await response.text();
-			mensagensMotivacionais = data.split('\n').filter(mensagem => mensagem.trim() !== '');
-			exibirMensagemMotivacional();
-		} catch (error) {
-			console.error('Erro ao carregar as mensagens:', error);
-			mensagemMotivacionalDisplay.textContent = "Nenhuma mensagem motivacional disponível.";
-		}
-	}
+    async function carregarMensagens() {
+        try {
+            // Evitar erro em file:// (desenvolvimento local)
+            if (window.location.protocol === "file:") {
+                throw new Error("Não é possível carregar o arquivo de mensagens em file://. Use um servidor HTTP.");
+            }
+
+            const response = await fetch('mensagens.txt');
+            if (!response.ok) throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
+            
+            const data = await response.text();
+            mensagensMotivacionais = data.split('\n').filter(mensagem => mensagem.trim() !== '');
+            exibirMensagemMotivacional();
+        } catch (error) {
+            console.error('Erro ao carregar as mensagens:', error);
+            mensagemMotivacionalDisplay.textContent = "Nenhuma mensagem motivacional disponível.";
+        }
+    }
 
     // Exibir uma mensagem motivacional aleatória
     function exibirMensagemMotivacional() {
@@ -115,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 cell.addEventListener('click', () => {
                     const valorClicado = parseInt(cell.dataset.value, 10);
-                    if (!cell.classList.contains('selected')) {
+                    if (!cell.classList.contains('selected') && !depositos.some(d => d.valor === valorClicado)) {
                         cell.classList.add('selected');
                         depositos.push({ valor: valorClicado, data: new Date().toISOString() });
                         localStorage.setItem('depositos', JSON.stringify(depositos));
@@ -155,33 +161,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Atualizar o histórico de depósitos com a data correta
-	function atualizarHistorico() {
-		historicoDepositos.innerHTML = '';
-		depositos.forEach((deposito, index) => {
-			const li = document.createElement('li');
-			
-			// Verificar se o valor do depósito existe
-			if (deposito.valor && !isNaN(deposito.valor)) {
-				// Verificar se a data do depósito existe
-				if (deposito.data) {
-					const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
-					li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
-				} else {
-					// Caso a data não esteja presente
-					li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data não disponível`;
-				}
-			} else {
-				li.textContent = `Depósito ${index + 1}: Valor inválido`;
-			}
-			
-			historicoDepositos.appendChild(li);
-		});
-	}
+    function atualizarHistorico() {
+        historicoDepositos.innerHTML = '';
+        depositos.forEach((deposito, index) => {
+            const li = document.createElement('li');
+            
+            // Verificar se o valor do depósito existe
+            if (deposito.valor && !isNaN(deposito.valor)) {
+                // Verificar se a data do depósito existe
+                if (deposito.data) {
+                    const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
+                    li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
+                } else {
+                    li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data não disponível`;
+                }
+            } else {
+                li.textContent = `Depósito ${index + 1}: Valor inválido`;
+            }
+            
+            historicoDepositos.appendChild(li);
+        });
+    }
 
     // Verificar objetivos intermediários
     function verificarMarcos() {
         if ([50, 100, 150].includes(depositos.length)) {
             alert(`Parabéns! Você atingiu o marco de ${depositos.length} depósitos! Continue firme no desafio.`);
+        }
+    }
+
+    // Gerar sugestões de depósitos futuros
+    function gerarSugestoesDepositos() {
+        sugestoesDepositos.innerHTML = ''; // Limpar sugestões anteriores
+
+        const diasRestantes = calcularDiasRestantes();
+        const depositosRestantes = 200 - depositos.length;
+        
+        if (diasRestantes <= 0 || depositosRestantes <= 0) {
+            const li = document.createElement('li');
+            li.textContent = 'Você já completou ou não há mais dias disponíveis para sugestões.';
+            sugestoesDepositos.appendChild(li);
+            return;
+        }
+
+        const sugestaoMedia = total / depositos.length; // Valor médio dos depósitos feitos até agora
+        const sugestaoMinima = Math.max(10, sugestaoMedia * 0.8); // Sugestão mínima baseada no padrão atual
+        const sugestaoMaxima = Math.min(500, sugestaoMedia * 1.2); // Sugestão máxima limitada
+
+        for (let i = 0; i < Math.min(depositosRestantes, 10); i++) {
+            const valorSugerido = (sugestaoMinima + (Math.random() * (sugestaoMaxima - sugestaoMinima))).toFixed(2);
+            const li = document.createElement('li');
+            li.textContent = `Depósito sugerido: R$ ${valorSugerido}`;
+            sugestoesDepositos.appendChild(li);
         }
     }
 
@@ -224,4 +255,5 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarMensagens();
     atualizarGrafico();
     atualizarHistorico();
+    gerarSugestoesDepositos(); // Adicionar as sugestões
 });
