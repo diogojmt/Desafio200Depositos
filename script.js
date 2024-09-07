@@ -10,44 +10,50 @@ document.addEventListener('DOMContentLoaded', () => {
     let ultimoDeposito = Date.now(); // Para notificações de alerta
     const progressoCanvas = document.getElementById('progressoGrafico').getContext('2d');
     let progressoGrafico = null; // Armazenar a instância do gráfico para atualizações
-	
-	// Calcular probabilidade de atingir o objetivo
-	function calcularProbabilidade() {
-		console.log("Calculando probabilidade...");
 
-		const diasRestantes = calcularDiasRestantes();
-		const depositosRestantes = 200 - depositos.length;
+    // Calcular probabilidade de atingir o objetivo
+    function calcularProbabilidade() {
+        console.log("Calculando probabilidade...");
 
-		if (diasRestantes <= 0) {
-			document.getElementById('probabilidade').textContent = "Probabilidade de Sucesso: 0%";
-			return;
-		}
+        const diasRestantes = calcularDiasRestantes();
+        const depositosRestantes = 200 - depositos.length;
 
-		const taxaNecessaria = depositosRestantes / diasRestantes;
-		const diasPassados = Math.floor((new Date() - startDateObj) / (1000 * 60 * 60 * 24));
-		const taxaAtual = diasPassados > 0 ? depositos.length / diasPassados : 0;
+        console.log(`Depósitos: ${depositos.length}, Dias Restantes: ${diasRestantes}, Depósitos Restantes: ${depositosRestantes}`);
 
-		let probabilidade = 0;
+        if (diasRestantes <= 0) {
+            document.getElementById('probabilidade').textContent = "Probabilidade de Sucesso: 0%";
+            return;
+        }
 
-		if (taxaAtual >= taxaNecessaria) {
-			probabilidade = 100; // Alta probabilidade de sucesso
-		} else {
-			probabilidade = Math.min((taxaAtual / taxaNecessaria) * 100, 100);
-		}
+        const taxaNecessaria = depositosRestantes / diasRestantes;
+        const diasPassados = Math.floor((new Date() - startDateObj) / (1000 * 60 * 60 * 24));
+        const taxaAtual = diasPassados > 0 ? depositos.length / diasPassados : 0;
 
-		document.getElementById('probabilidade').textContent = `Probabilidade de Sucesso: ${probabilidade.toFixed(2)}%`;
-	}
+        console.log(`Taxa Atual: ${taxaAtual}, Taxa Necessária: ${taxaNecessaria}`);
 
-	// Atualizar probabilidade junto com o total e o gráfico
-	function atualizarTotal() {
-		calcularTotal();
-		totalDisplay.textContent = `R$ ${total.toFixed(2)}`;
-		const diasRestantes = calcularDiasRestantes();
-		const mensagem = `Faltam ${diasRestantes} dias para terminar o desafio e você já realizou ${depositos.length} depósitos totalizando R$ ${total.toFixed(2)}.`;
-		document.getElementById('mensagem').textContent = mensagem;
+        let probabilidade = 0;
 
-		calcularProbabilidade(); // Atualizar probabilidade
-	}
+        if (taxaAtual >= taxaNecessaria) {
+            probabilidade = 100; // Alta probabilidade de sucesso
+        } else {
+            probabilidade = Math.min((taxaAtual / taxaNecessaria) * 100, 100);
+        }
+
+        console.log(`Probabilidade calculada: ${probabilidade}%`);
+
+        document.getElementById('probabilidade').textContent = `Probabilidade de Sucesso: ${probabilidade.toFixed(2)}%`;
+    }
+
+    // Atualizar probabilidade junto com o total e o gráfico
+    function atualizarTotal() {
+        calcularTotal();
+        totalDisplay.textContent = `R$ ${total.toFixed(2)}`;
+        const diasRestantes = calcularDiasRestantes();
+        const mensagem = `Faltam ${diasRestantes} dias para terminar o desafio e você já realizou ${depositos.length} depósitos totalizando R$ ${total.toFixed(2)}.`;
+        document.getElementById('mensagem').textContent = mensagem;
+
+        calcularProbabilidade(); // Atualizar probabilidade
+    }
 
     // Função para carregar as mensagens de um arquivo txt
     async function carregarMensagens() {
@@ -86,8 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
         startDate = new Date().toISOString().split('T')[0]; // Salva a data de hoje como a data inicial
         localStorage.setItem('startDate', startDate);
     }
-    
+
     const startDateObj = new Date(startDate);
+    console.log(`Data inicial: ${startDateObj}`);  // Verificar se a data inicial está correta
+
     const endDateObj = new Date(startDateObj);
     endDateObj.setDate(startDateObj.getDate() + 365);
 
