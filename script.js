@@ -10,6 +10,44 @@ document.addEventListener('DOMContentLoaded', () => {
     let ultimoDeposito = Date.now(); // Para notificações de alerta
     const progressoCanvas = document.getElementById('progressoGrafico').getContext('2d');
     let progressoGrafico = null; // Armazenar a instância do gráfico para atualizações
+	
+	// Calcular probabilidade de atingir o objetivo
+	function calcularProbabilidade() {
+		console.log("Calculando probabilidade...");
+
+		const diasRestantes = calcularDiasRestantes();
+		const depositosRestantes = 200 - depositos.length;
+
+		if (diasRestantes <= 0) {
+			document.getElementById('probabilidade').textContent = "Probabilidade de Sucesso: 0%";
+			return;
+		}
+
+		const taxaNecessaria = depositosRestantes / diasRestantes;
+		const diasPassados = Math.floor((new Date() - startDateObj) / (1000 * 60 * 60 * 24));
+		const taxaAtual = diasPassados > 0 ? depositos.length / diasPassados : 0;
+
+		let probabilidade = 0;
+
+		if (taxaAtual >= taxaNecessaria) {
+			probabilidade = 100; // Alta probabilidade de sucesso
+		} else {
+			probabilidade = Math.min((taxaAtual / taxaNecessaria) * 100, 100);
+		}
+
+		document.getElementById('probabilidade').textContent = `Probabilidade de Sucesso: ${probabilidade.toFixed(2)}%`;
+	}
+
+	// Atualizar probabilidade junto com o total e o gráfico
+	function atualizarTotal() {
+		calcularTotal();
+		totalDisplay.textContent = `R$ ${total.toFixed(2)}`;
+		const diasRestantes = calcularDiasRestantes();
+		const mensagem = `Faltam ${diasRestantes} dias para terminar o desafio e você já realizou ${depositos.length} depósitos totalizando R$ ${total.toFixed(2)}.`;
+		document.getElementById('mensagem').textContent = mensagem;
+
+		calcularProbabilidade(); // Atualizar probabilidade
+	}
 
     // Função para carregar as mensagens de um arquivo txt
     async function carregarMensagens() {
