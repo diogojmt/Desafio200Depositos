@@ -186,15 +186,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Atualizar o histórico de depósitos com a data correta
-    function atualizarHistorico() {
-        historicoDepositos.innerHTML = '';
-        depositos.forEach((deposito, index) => {
-            const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
-            const li = document.createElement('li');
-            li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
-            historicoDepositos.appendChild(li);
-        });
-    }
+	function atualizarHistorico() {
+		historicoDepositos.innerHTML = '';
+		depositos.forEach((deposito, index) => {
+			// Verificar se o valor está definido e é numérico
+			if (deposito.valor !== undefined && !isNaN(deposito.valor)) {
+				const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
+				const li = document.createElement('li');
+				li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
+				historicoDepositos.appendChild(li);
+			} else {
+				console.error(`Valor de depósito inválido no índice ${index}:`, deposito);
+			}
+		});
+	}
 
     // Verificar objetivos intermediários
     function verificarMarcos() {
