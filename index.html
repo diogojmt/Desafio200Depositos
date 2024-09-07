@@ -8,35 +8,48 @@
     <script src="js/chart.umd.js"></script>
 </head>
 <body>
+    <!-- Cabeçalho Principal -->
     <h1>Desafio dos 200 Depósitos</h1>
 
+    <!-- Mensagem Motivacional -->
     <p id="mensagem-motivacional" style="font-size: 1.2em; margin: 20px 0; color: #007bff;"></p>
 
+    <!-- Botão para Alternar Modo Escuro -->
     <button id="dark-mode-toggle">Alternar Modo Escuro</button>
 	
+    <!-- Exibição da Probabilidade de Sucesso -->
     <p id="probabilidade" class="probabilidade-visual">Probabilidade de Sucesso: 0%</p>
 
+    <!-- Gráfico de Progresso -->
     <h2>Progresso do Desafio</h2>
     <canvas id="progressoGrafico" width="400" height="200"></canvas>
 
+    <!-- Tabela de Depósitos -->
     <div class="table-container">
-        <table id="depositos"></table>
+        <table id="depositos">
+            <!-- Tabela gerada dinamicamente pelo JavaScript -->
+        </table>
     </div>
 
+    <!-- Resumo Financeiro -->
     <h2>Resumo Financeiro</h2>
     <p id="total">Total Acumulado: R$ 0.00</p>
     <p id="data-inicial"></p>
     <p id="data-final"></p>
     <p id="mensagem"></p>
 
+    <!-- Histórico de Depósitos -->
     <h2>Histórico de Depósitos</h2>
     <ul id="historicoDepositos"></ul>
 
+    <!-- Botão para Exportar Progresso -->
     <button id="exportarCSV">Exportar Progresso (CSV)</button>
 
+    <!-- Sugestões de Depósitos Futuros -->
     <h2>Sugestões de Depósitos Futuros</h2>
     <ul id="sugestoesDepositos"></ul>
 
+    <!-- Script Principal -->
     <script src="script.js"></script>
 </body>
 </html>

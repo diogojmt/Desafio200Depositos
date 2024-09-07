@@ -98,6 +98,7 @@ body.dark-mode .probabilidade-visual {
     margin: 20px auto;
 }
 
+/* Itens da lista de Sugestões de Depósitos */
 #sugestoesDepositos li {
     padding: 5px;
     margin: 5px 0;
@@ -108,6 +109,20 @@ body.dark-mode .probabilidade-visual {
 
 #sugestoesDepositos li:hover {
     background-color: #ddd;
+}
+
+/* Sugestões no Modo Escuro */
+body.dark-mode #sugestoesDepositos {
+    background-color: #444;
+}
+
+body.dark-mode #sugestoesDepositos li {
+    background-color: #555;
+    color: #fff;
+}
+
+body.dark-mode #sugestoesDepositos li:hover {
+    background-color: #666;
 }
 
 /* Tabela de Depósitos */
