@@ -222,27 +222,81 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Gerar sugestões de depósitos
-    function gerarSugestoesDepositos() {
-        sugestoesDepositos.innerHTML = ''; // Limpar sugestões anteriores
-        const diasRestantes = calcularDiasRestantes();
-        const depositosRestantes = 200 - depositos.length;
+	// Função para gerar sugestões de depósitos com base no tempo restante e no número de depósitos restantes
+	function gerarSugestoesDepositos() {
+		sugestoesDepositos.innerHTML = ''; // Limpar sugestões anteriores
+		const diasRestantes = calcularDiasRestantes();
+		const depositosRestantes = 200 - depositos.length;
+		const diasPassados = calcularDiasPassados();
 
-        if (diasRestantes <= 0 || depositosRestantes <= 0) {
-            const li = document.createElement('li');
-            li.textContent = 'Você já completou ou não há mais dias disponíveis para sugestões.';
-            sugestoesDepositos.appendChild(li);
-            return;
-        }
+		// Verificar se é a primeira vez que o usuário está utilizando o sistema
+		if (localStorage.getItem('startDate') === null) {
+			localStorage.setItem('startDate', new Date().toISOString()); // Definir a data de início
+			console.log("Iniciando o desafio pela primeira vez.");
+		}
 
-        const sugestoes = Math.min(3, depositosRestantes); // Gerar até 3 sugestões
-        for (let i = 0; i < sugestoes; i++) {
-            const numero = Math.ceil(Math.random() * 200); // Gerar sugestão de número aleatório
-            const li = document.createElement('li');
-            li.textContent = `Sugestão: Depósito de R$ ${numero.toFixed(2)}.`;
-            sugestoesDepositos.appendChild(li);
-        }
-    }
+		if (diasRestantes <= 0 || depositosRestantes <= 0) {
+			const li = document.createElement('li');
+			li.textContent = 'Você já completou ou não há mais dias disponíveis para sugestões.';
+			sugestoesDepositos.appendChild(li);
+			return;
+		}
+
+		// Calcular quantos depósitos deveriam ter sido feitos até agora
+		const totalDepositosEsperados = Math.ceil((diasPassados / (diasPassados + diasRestantes)) * 200);
+
+		// Se o usuário não fez nenhum depósito, sugerir que comece
+		if (depositos.length === 0) {
+			const instrucoes = document.createElement('p');
+			instrucoes.textContent = `Você ainda não começou a realizar depósitos. Que tal começar hoje?`;
+			sugestoesDepositos.appendChild(instrucoes);
+			return;
+		}
+
+		// Calcular o número de depósitos necessários por dia
+		const sugestoesPorDia = depositosRestantes / diasRestantes;
+
+		// Exibir "Parabéns!" se o número de depósitos por dia for menor que 1
+		if (sugestoesPorDia < 1) {
+			const parabensMensagem = document.createElement('p');
+			parabensMensagem.textContent = `Parabéns! Você está adiantado com seus depósitos! Continue assim para completar o desafio antes do prazo.`;
+			parabensMensagem.style.color = 'green'; // Cor verde para destacar a mensagem
+			sugestoesDepositos.appendChild(parabensMensagem);
+		} else {
+			// Caso contrário, sugerir quantos depósitos ele precisa fazer por dia
+			const numerosNaoSelecionados = [];
+			for (let i = 1; i <= 200; i++) {
+				if (!depositos.some(deposito => deposito.valor === i)) {
+					numerosNaoSelecionados.push(i); // Adicionar números que ainda não foram selecionados
+				}
+			}
+
+			// Garantir que o sistema sugira o número necessário de depósitos para que o usuário complete o desafio
+			for (let i = 0; i < Math.ceil(sugestoesPorDia); i++) {
+				if (numerosNaoSelecionados.length === 0) break; // Parar se não houver mais números disponíveis
+
+				const indiceAleatorio = Math.floor(Math.random() * numerosNaoSelecionados.length);
+				const numeroSugestao = numerosNaoSelecionados.splice(indiceAleatorio, 1)[0]; // Remover o número sugerido da lista
+
+				const li = document.createElement('li');
+				li.textContent = `Sugestão: Depósito número ${numeroSugestao}.`;
+				sugestoesDepositos.appendChild(li);
+			}
+
+			// Instrução extra para o usuário se ele precisar fazer mais depósitos
+			const instrucoesExtra = document.createElement('p');
+			instrucoesExtra.textContent = `Você precisa realizar ${Math.ceil(sugestoesPorDia)} depósitos por dia para completar o desafio dentro do prazo.`;
+			sugestoesDepositos.appendChild(instrucoesExtra);
+		}
+	}
+
+	// Função para calcular quantos dias já passaram desde o início do desafio
+	function calcularDiasPassados() {
+		const hoje = new Date();
+		const startDate = new Date(localStorage.getItem('startDate') || hoje); // Garantir que a data de início seja obtida corretamente
+		const diasPassados = Math.floor((hoje - startDate) / (1000 * 60 * 60 * 24)); // Diferença de dias desde a data de início
+		return diasPassados;
+	}
 
     // Iniciar o desafio
     iniciarDesafio();
