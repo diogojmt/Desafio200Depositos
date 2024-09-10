@@ -5,120 +5,93 @@ document.addEventListener('DOMContentLoaded', () => {
     const mensagemMotivacionalDisplay = document.getElementById('mensagem-motivacional');
     const historicoDepositos = document.getElementById('historicoDepositos');
     const sugestoesDepositos = document.getElementById('sugestoesDepositos');
+    const slider = document.getElementById('dias-limite'); // Controle deslizante para o limite
+    const diasLimiteValorDisplay = document.getElementById('dias-limite-valor');
+    const tabela = document.getElementById('depositos'); // Elemento da tabela no DOM
     let total = 0;
-    
-    // Cada depósito agora inclui valor e data
+
+    // Verificação do slider e da tabela
+    if (!slider) {
+        console.error("Elemento 'dias-limite' não encontrado no DOM.");
+        return;
+    }
+    if (!tabela) {
+        console.error("Elemento 'depositos' não encontrado no DOM.");
+        return;
+    }
+
+    // Inicializar limiteDias com o valor do slider
+    let limiteDias = parseInt(slider.value);
+    if (isNaN(limiteDias)) {
+        console.error('Valor inválido do slider. Definindo valor padrão para 100 dias.');
+        limiteDias = 100;
+    }
+
+    // Carregar depósitos e configurar estado inicial
     let depositos = JSON.parse(localStorage.getItem('depositos')) || [];
-    let mensagensMotivacionais = [];
     let ultimoDeposito = Date.now();
     const progressoCanvas = document.getElementById('progressoGrafico').getContext('2d');
     let progressoGrafico = null;
 
-    // Calcular probabilidade de atingir o objetivo
-    function calcularProbabilidade() {
-        const diasRestantes = calcularDiasRestantes();
-        const depositosRestantes = 200 - depositos.length;
+    // Verificar se há um valor salvo no localStorage
+    const valorSalvo = localStorage.getItem('limiteDias');
 
-        if (diasRestantes <= 0) {
-            document.getElementById('probabilidade').textContent = "Probabilidade de Sucesso: 0%";
-            return;
-        }
+    if (valorSalvo) {
+        slider.value = valorSalvo; // Restaurar valor do slider
+        diasLimiteValorDisplay.textContent = `${valorSalvo} dias`; // Atualizar exibição do valor
+        limiteDias = parseInt(valorSalvo); // Atualizar 'limiteDias' com o valor salvo
+    }
 
-        const taxaNecessaria = depositosRestantes / diasRestantes;
-        const diasPassados = Math.floor((new Date() - startDateObj) / (1000 * 60 * 60 * 24));
-        const taxaAtual = diasPassados > 0 ? depositos.length / diasPassados : 0;
-
-        let probabilidade = 0;
-        if (taxaAtual >= taxaNecessaria) {
-            probabilidade = 100;
+    // Atualiza o valor do limite de dias dinamicamente e salva no localStorage
+    slider.addEventListener('input', () => {
+        const valor = parseInt(slider.value);
+        if (!isNaN(valor)) {
+            limiteDias = valor; // Atualizar 'limiteDias' sem redeclará-lo
+            localStorage.setItem('limiteDias', valor); // Salvar o valor no localStorage
+            diasLimiteValorDisplay.textContent = `${valor} dias`; // Atualiza o valor exibido
+            iniciarDesafio(); // Atualizar a lógica do desafio com o novo limite
         } else {
-            probabilidade = Math.min((taxaAtual / taxaNecessaria) * 100, 100);
+            console.error('Valor inválido do slider.');
         }
-
-        document.getElementById('probabilidade').textContent = `Probabilidade de Sucesso: ${probabilidade.toFixed(2)}%`;
-    }
-
-    // Função para atualizar o total de depósitos e dias restantes
-    function atualizarTotal() {
-        calcularTotal();
-        totalDisplay.textContent = `R$ ${total.toFixed(2)}`;
-        const diasRestantes = calcularDiasRestantes();
-        const mensagem = `Faltam ${diasRestantes} dias para terminar o desafio e você já realizou ${depositos.length} depósitos totalizando R$ ${total.toFixed(2)}.`;
-        document.getElementById('mensagem').textContent = mensagem;
-        calcularProbabilidade();
-    }
-
-    // Função para carregar as mensagens de um arquivo txt
-    async function carregarMensagens() {
-        try {
-            // Evitar erro em file:// (desenvolvimento local)
-            if (window.location.protocol === "file:") {
-                throw new Error("Não é possível carregar o arquivo de mensagens em file://. Use um servidor HTTP.");
-            }
-
-            const response = await fetch('mensagens.txt');
-            if (!response.ok) throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
-            
-            const data = await response.text();
-            mensagensMotivacionais = data.split('\n').filter(mensagem => mensagem.trim() !== '');
-            exibirMensagemMotivacional();
-        } catch (error) {
-            console.error('Erro ao carregar as mensagens:', error);
-            mensagemMotivacionalDisplay.textContent = "Nenhuma mensagem motivacional disponível.";
-        }
-    }
-
-    // Exibir uma mensagem motivacional aleatória
-    function exibirMensagemMotivacional() {
-        if (mensagensMotivacionais.length > 0) {
-            const mensagemAleatoria = mensagensMotivacionais[Math.floor(Math.random() * mensagensMotivacionais.length)];
-            mensagemMotivacionalDisplay.textContent = mensagemAleatoria;
-        } else {
-            mensagemMotivacionalDisplay.textContent = "Mantenha-se motivado! Continue com o desafio!";
-        }
-    }
-
-    // Função para alternar modo escuro
-    document.getElementById('dark-mode-toggle').addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
     });
 
-    // Verificar se a data inicial já está no localStorage
-    let startDate = localStorage.getItem('startDate');
-    if (!startDate) {
-        startDate = new Date().toISOString().split('T')[0];
-        localStorage.setItem('startDate', startDate);
+    // Função para iniciar o desafio com base no valor do slider
+    function iniciarDesafio() {
+        const startDate = localStorage.getItem('startDate') || new Date().toISOString().split('T')[0];
+        const startDateObj = new Date(startDate);
+        let endDateObj = new Date(startDateObj);
+        endDateObj.setDate(startDateObj.getDate() + limiteDias);
+
+        // Exibir as datas
+        dataInicialDisplay.textContent = `Data Inicial: ${startDateObj.toLocaleDateString()}`;
+        dataFinalDisplay.textContent = `Data Final: ${endDateObj.toLocaleDateString()}`;
+
+        atualizarTotal();
+        carregarMensagens();
+        atualizarGrafico();
+        atualizarHistorico();
+        criarTabela(); // Garantir que a tabela seja criada ao iniciar o desafio
+        gerarSugestoesDepositos();
     }
-
-    const startDateObj = new Date(startDate);
-    const endDateObj = new Date(startDateObj);
-    endDateObj.setDate(startDateObj.getDate() + 365);
-
-    dataInicialDisplay.textContent = `Data Inicial: ${startDateObj.toLocaleDateString()}`;
-    dataFinalDisplay.textContent = `Data Final: ${endDateObj.toLocaleDateString()}`;
 
     // Função para criar a tabela de depósitos
     function criarTabela() {
-        const tabela = document.getElementById('depositos');
-        if (!tabela) {
-            console.error("Tabela não encontrada no HTML.");
-            return;
-        }
+        tabela.innerHTML = ''; // Limpar tabela antes de criar
 
-        tabela.innerHTML = '';
         let contador = 1;
-
-        for (let i = 0; i < 20; i++) {
-            const row = document.createElement('tr');
-            for (let j = 0; j < 10; j++) {
+        for (let i = 0; i < 20; i++) { // Criar 20 linhas
+            const row = document.createElement('tr'); // Criar linha
+            for (let j = 0; j < 10; j++) { // Criar 10 células por linha
                 const cell = document.createElement('td');
                 cell.textContent = contador;
                 cell.dataset.value = contador;
 
+                // Verificar se o depósito já foi feito e marcar a célula
                 if (depositos.find(d => d.valor === contador)) {
                     cell.classList.add('selected');
                 }
 
+                // Adicionar evento de clique para selecionar depósito
                 cell.addEventListener('click', () => {
                     const valorClicado = parseInt(cell.dataset.value, 10);
                     if (!cell.classList.contains('selected') && !depositos.some(d => d.valor === valorClicado)) {
@@ -133,14 +106,53 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                row.appendChild(cell);
+                row.appendChild(cell); // Adicionar célula à linha
                 contador++;
             }
-            tabela.appendChild(row);
+            tabela.appendChild(row); // Adicionar linha à tabela
         }
     }
 
-    // Atualizar o gráfico de progresso
+    // Função para atualizar o total de depósitos e dias restantes
+    function atualizarTotal() {
+        calcularTotal();
+        totalDisplay.textContent = `R$ ${total.toFixed(2)}`;
+        const diasRestantes = calcularDiasRestantes();
+        const mensagem = `Faltam ${diasRestantes} dias para terminar o desafio e você já realizou ${depositos.length} depósitos totalizando R$ ${total.toFixed(2)}.`;
+        document.getElementById('mensagem').textContent = mensagem;
+        calcularProbabilidade();
+    }
+
+    // Função para calcular o total de depósitos
+    function calcularTotal() {
+        total = depositos.reduce((acc, deposito) => acc + deposito.valor, 0);
+    }
+
+    // Função para calcular a probabilidade de sucesso
+    function calcularProbabilidade() {
+        const diasRestantes = calcularDiasRestantes();
+        const depositosRestantes = 200 - depositos.length;
+
+        if (diasRestantes <= 0) {
+            document.getElementById('probabilidade').textContent = "Probabilidade de Sucesso: 0%";
+            return;
+        }
+
+        const taxaNecessaria = depositosRestantes / diasRestantes;
+        const diasPassados = Math.floor((new Date() - new Date(localStorage.getItem('startDate'))) / (1000 * 60 * 60 * 24));
+        const taxaAtual = diasPassados > 0 ? depositos.length / diasPassados : 0;
+
+        let probabilidade = 0;
+        if (taxaAtual >= taxaNecessaria) {
+            probabilidade = 100;
+        } else {
+            probabilidade = Math.min((taxaAtual / taxaNecessaria) * 100, 100);
+        }
+
+        document.getElementById('probabilidade').textContent = `Probabilidade de Sucesso: ${probabilidade.toFixed(2)}%`;
+    }
+
+    // Função para atualizar o gráfico de progresso
     function atualizarGrafico() {
         if (progressoGrafico) progressoGrafico.destroy();
 
@@ -160,25 +172,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Atualizar o histórico de depósitos com a data correta
+    // Função para atualizar o histórico de depósitos
     function atualizarHistorico() {
         historicoDepositos.innerHTML = '';
         depositos.forEach((deposito, index) => {
             const li = document.createElement('li');
-            
-            // Verificar se o valor do depósito existe
-            if (deposito.valor && !isNaN(deposito.valor)) {
-                // Verificar se a data do depósito existe
-                if (deposito.data) {
-                    const dataDeposito = new Date(deposito.data).toLocaleDateString(); // Data do depósito
-                    li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
-                } else {
-                    li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data não disponível`;
-                }
-            } else {
-                li.textContent = `Depósito ${index + 1}: Valor inválido`;
-            }
-            
+            const dataDeposito = new Date(deposito.data).toLocaleDateString();
+            li.textContent = `Depósito ${index + 1}: Valor R$ ${deposito.valor.toFixed(2)} - Data: ${dataDeposito}`;
             historicoDepositos.appendChild(li);
         });
     }
@@ -190,13 +190,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Gerar sugestões de depósitos futuros
+    // Função para calcular dias restantes
+	function calcularDiasRestantes() {
+		const hoje = new Date();
+		const startDate = new Date(localStorage.getItem('startDate') || hoje); // Garantir que a data de início seja obtida corretamente
+		const diasPassados = Math.floor((hoje - startDate) / (1000 * 60 * 60 * 24)); // Diferença de dias desde a data de início
+		return Math.max(limiteDias - diasPassados, 0); // Garantir que o valor não seja negativo
+	}
+
+    // Função para carregar mensagens motivacionais de um arquivo txt
+    async function carregarMensagens() {
+        try {
+            const response = await fetch('mensagens.txt');
+            if (!response.ok) throw new Error(`Erro ao carregar o arquivo: ${response.statusText}`);
+            const data = await response.text();
+            mensagensMotivacionais = data.split('\n').filter(mensagem => mensagem.trim() !== '');
+            exibirMensagemMotivacional();
+        } catch (error) {
+            console.error('Erro ao carregar as mensagens:', error);
+            mensagemMotivacionalDisplay.textContent = "Nenhuma mensagem motivacional disponível.";
+        }
+    }
+
+    // Exibir uma mensagem motivacional aleatória
+    function exibirMensagemMotivacional() {
+        if (mensagensMotivacionais.length > 0) {
+            const mensagemAleatoria = mensagensMotivacionais[Math.floor(Math.random() * mensagensMotivacionais.length)];
+            mensagemMotivacionalDisplay.textContent = mensagemAleatoria;
+        } else {
+            mensagemMotivacionalDisplay.textContent = "Mantenha-se motivado! Continue com o desafio!";
+        }
+    }
+
+    // Gerar sugestões de depósitos
     function gerarSugestoesDepositos() {
         sugestoesDepositos.innerHTML = ''; // Limpar sugestões anteriores
-
         const diasRestantes = calcularDiasRestantes();
         const depositosRestantes = 200 - depositos.length;
-        
+
         if (diasRestantes <= 0 || depositosRestantes <= 0) {
             const li = document.createElement('li');
             li.textContent = 'Você já completou ou não há mais dias disponíveis para sugestões.';
@@ -204,44 +235,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const sugestaoMedia = total / depositos.length; // Valor médio dos depósitos feitos até agora
-        const sugestaoMinima = Math.max(10, sugestaoMedia * 0.8); // Sugestão mínima baseada no padrão atual
-        const sugestaoMaxima = Math.min(500, sugestaoMedia * 1.2); // Sugestão máxima limitada
-
-        for (let i = 0; i < Math.min(depositosRestantes, 10); i++) {
-            const valorSugerido = (sugestaoMinima + (Math.random() * (sugestaoMaxima - sugestaoMinima))).toFixed(2);
+        const sugestoes = Math.min(3, depositosRestantes); // Gerar até 3 sugestões
+        for (let i = 0; i < sugestoes; i++) {
+            const numero = Math.ceil(Math.random() * 200); // Gerar sugestão de número aleatório
             const li = document.createElement('li');
-            li.textContent = `Depósito sugerido: R$ ${valorSugerido}`;
+            li.textContent = `Sugestão: Depósito de R$ ${numero.toFixed(2)}.`;
             sugestoesDepositos.appendChild(li);
         }
     }
 
-    // Função para exportar CSV
-    document.getElementById('exportarCSV').addEventListener('click', () => {
-        let csvContent = "data:text/csv;charset=utf-8,Depósito,Data\n";
-        depositos.forEach(deposito => {
-            const dataDeposito = new Date(deposito.data).toLocaleDateString();
-            csvContent += `${deposito.valor},${dataDeposito}\n`;
-        });
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "progresso.csv");
-        document.body.appendChild(link);
-        link.click();
-    });
-
-    // Calcular total de depósitos
-    function calcularTotal() {
-        total = depositos.reduce((acc, deposito) => acc + deposito.valor, 0);
-    }
-
-    // Calcular dias restantes
-    function calcularDiasRestantes() {
-        const hoje = new Date();
-        const diasPassados = Math.floor((hoje - startDateObj) / (1000 * 60 * 60 * 24));
-        return 365 - diasPassados;
-    }
+    // Iniciar o desafio
+    iniciarDesafio();
 
     // Notificações de alerta
     setInterval(() => {
@@ -249,11 +253,4 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Você não fez nenhum depósito nas últimas 24 horas. Lembre-se de continuar o desafio!");
         }
     }, 3600000);
-
-    criarTabela();
-    atualizarTotal();
-    carregarMensagens();
-    atualizarGrafico();
-    atualizarHistorico();
-    gerarSugestoesDepositos(); // Adicionar as sugestões
 });

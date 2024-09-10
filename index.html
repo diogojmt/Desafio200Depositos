@@ -8,48 +8,81 @@
     <script src="js/chart.umd.js"></script>
 </head>
 <body>
+
     <!-- Cabeçalho Principal -->
-    <h1>Desafio dos 200 Depósitos</h1>
+    <header>
+        <h1>Desafio dos 200 Depósitos</h1>
+    </header>
+
+    <!-- Controle Deslizante para o Limite de Dias -->
+    <section>
+        <label for="dias-limite">Defina o limite de dias para o desafio:</label>
+        <input type="range" id="dias-limite" min="30" max="365" value="100">
+		<span id="dias-limite-valor">100 dias</span> <!-- Exibe o valor do controle deslizante -->
+    </section>
 
     <!-- Mensagem Motivacional -->
-    <p id="mensagem-motivacional" style="font-size: 1.2em; margin: 20px 0; color: #007bff;"></p>
+    <section>
+        <p id="mensagem-motivacional" class="mensagem-motivacional"></p>
+    </section>
 
     <!-- Botão para Alternar Modo Escuro -->
-    <button id="dark-mode-toggle">Alternar Modo Escuro</button>
-	
+    <section>
+        <button id="dark-mode-toggle" class="btn">Alternar Modo Escuro</button>
+    </section>
+    
     <!-- Exibição da Probabilidade de Sucesso -->
-    <p id="probabilidade" class="probabilidade-visual">Probabilidade de Sucesso: 0%</p>
+    <section>
+        <p id="probabilidade" class="probabilidade-visual">Probabilidade de Sucesso: 0%</p>
+    </section>
 
     <!-- Gráfico de Progresso -->
-    <h2>Progresso do Desafio</h2>
-    <canvas id="progressoGrafico" width="400" height="200"></canvas>
+    <section>
+        <h2>Progresso do Desafio</h2>
+        <canvas id="progressoGrafico" width="400" height="200"></canvas>
+    </section>
 
     <!-- Tabela de Depósitos -->
-    <div class="table-container">
+    <section class="table-container">
+        <h2>Tabela de Depósitos</h2>
         <table id="depositos">
-            <!-- Tabela gerada dinamicamente pelo JavaScript -->
+            <!-- A tabela será gerada dinamicamente pelo JavaScript -->
         </table>
-    </div>
+    </section>
 
     <!-- Resumo Financeiro -->
-    <h2>Resumo Financeiro</h2>
-    <p id="total">Total Acumulado: R$ 0.00</p>
-    <p id="data-inicial"></p>
-    <p id="data-final"></p>
-    <p id="mensagem"></p>
+    <section>
+        <h2>Resumo Financeiro</h2>
+        <p id="total" class="resumo-financeiro">Total Acumulado: R$ 0.00</p>
+        <p id="data-inicial" class="resumo-financeiro"></p>
+        <p id="data-final" class="resumo-financeiro"></p>
+        <p id="mensagem" class="resumo-financeiro"></p>
+    </section>
 
     <!-- Histórico de Depósitos -->
-    <h2>Histórico de Depósitos</h2>
-    <ul id="historicoDepositos"></ul>
+    <section>
+        <h2>Histórico de Depósitos</h2>
+        <ul id="historicoDepositos">
+            <!-- Histórico gerado dinamicamente pelo JavaScript -->
+        </ul>
+    </section>
 
     <!-- Botão para Exportar Progresso -->
-    <button id="exportarCSV">Exportar Progresso (CSV)</button>
+    <section>
+        <button id="exportarCSV" class="btn">Exportar Progresso (CSV)</button>
+    </section>
 
     <!-- Sugestões de Depósitos Futuros -->
-    <h2>Sugestões de Depósitos Futuros</h2>
-    <ul id="sugestoesDepositos"></ul>
+    <section id="sugestoesDepositosContainer">
+        <h2>Sugestões de Depósitos Futuros</h2>
+        <ul id="sugestoesDepositos">
+            <!-- Sugestões geradas dinamicamente pelo JavaScript -->
+        </ul>
+    </section>
 
     <!-- Script Principal -->
-    <script src="script.js"></script>
+    <script src="js/chart.umd.js"></script>
+	<script src="script.js"></script>
+
 </body>
 </html>
