@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const diasLimiteValorDisplay = document.getElementById('dias-limite-valor');
     const tabela = document.getElementById('depositos'); // Elemento da tabela no DOM
     let total = 0;
-
+	
+	
     // Verificação do slider e da tabela
     if (!slider) {
         console.error("Elemento 'dias-limite' não encontrado no DOM.");
@@ -307,4 +308,21 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Você não fez nenhum depósito nas últimas 24 horas. Lembre-se de continuar o desafio!");
         }
     }, 3600000);
+
+// Função para resetar os dados do sistema
+    function resetarSistema() {
+        const confirmacao = confirm("Tem certeza de que deseja resetar todos os dados? Isso apagará todo o progresso.");
+        if (confirmacao) {
+            localStorage.clear(); // Limpar todos os dados do localStorage
+            alert("Sistema resetado com sucesso!");
+            location.reload(); // Recarregar a página para aplicar o reset
+        }
+    }
+
+    // Adicionar evento de clique ao botão de reset
+    const botaoResetar = document.getElementById('resetarSistema');
+    if (botaoResetar) {
+        botaoResetar.addEventListener('click', resetarSistema);
+    }
 });
+
