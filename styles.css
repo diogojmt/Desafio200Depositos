@@ -13,11 +13,19 @@ body {
 }
 
 /* Cabeçalho */
-h1 {
-    color: #343a40;
-    margin-top: 20px;
+.header-container {
+    width: 100%; 
+    max-width: 900px; 
+    margin: 20px auto; 
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-container h1 {
+    margin: 0;
     font-size: 2.5em;
-    text-align: center;
 }
 
 /* Modo Escuro */
@@ -26,37 +34,10 @@ body.dark-mode {
     color: #fff;
 }
 
-/* Cabeçalhos no Modo Escuro */
 body.dark-mode h1, 
-body.dark-mode h2 {
-    color: #ffffff;
-}
-
-/* Tabela no Modo Escuro */
-body.dark-mode td {
-    background-color: #555;
+body.dark-mode h2,
+body.dark-mode p {
     color: #fff;
-}
-
-body.dark-mode td.selected {
-    background-color: #ff5722;
-}
-
-/* Botão de Modo Escuro */
-#dark-mode-toggle {
-    margin: 15px;
-    padding: 10px 20px;
-    background-color: #ccc;
-    color: #333;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-#dark-mode-toggle:hover {
-    background-color: #bbb;
 }
 
 /* Estilo da Probabilidade */
@@ -73,19 +54,92 @@ body.dark-mode td.selected {
     margin: 20px 0;
 }
 
-/* Probabilidade no Modo Escuro */
 body.dark-mode .probabilidade-visual {
     background-color: #444;
-    color: #28a745;
 }
 
-/* Container para rolagem horizontal e centralização */
+/* Controle Deslizante */
+input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+}
+
+/* Tabela de Depósitos */
+table {
+    width: 100%;
+    max-width: 1000px;
+    border-collapse: collapse;
+    margin: 20px auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #dee2e6;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    background-color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+td.selected {
+    background-color: #28a745;
+    color: #fff;
+    font-weight: bold;
+}
+
+body.dark-mode th, 
+body.dark-mode td {
+    background-color: #555;
+    border-color: #777;
+}
+
+body.dark-mode td.selected {
+    background-color: #ff5722;
+}
+
+td:hover {
+    background-color: #f1f1f1;
+}
+
+body.dark-mode td:hover {
+    background-color: #666;
+}
+
+/* Container responsivo para rolagem horizontal */
 .table-container {
     width: 100%;
     max-width: 1000px;
     overflow-x: auto;
     margin: 20px auto;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    td {
+        padding: 10px;
+        font-size: 1em;
+    }
+
+    .probabilidade-visual {
+        font-size: 1.2em;
+    }
+}
+
+/* Canvas para o Gráfico */
+canvas {
+    max-width: 600px;
+    max-height: 400px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+body.dark-mode canvas {
+    background-color: #222;
 }
 
 /* Sugestões de Depósitos */
@@ -98,7 +152,6 @@ body.dark-mode .probabilidade-visual {
     margin: 20px auto;
 }
 
-/* Itens da lista de Sugestões de Depósitos */
 #sugestoesDepositos li {
     padding: 10px;
     margin: 8px 0;
@@ -113,7 +166,6 @@ body.dark-mode .probabilidade-visual {
     background-color: #ddd;
 }
 
-/* Sugestões no Modo Escuro */
 body.dark-mode #sugestoesDepositos {
     background-color: #444;
 }
@@ -127,74 +179,42 @@ body.dark-mode #sugestoesDepositos li:hover {
     background-color: #666;
 }
 
-/* Tabela de Depósitos */
-table {
+/* Estilo para o contêiner do histórico de depósitos */
+#historicoDepositosContainer {
+    max-height: 0px; /* Inicialmente colapsado */
+    overflow: hidden;  /* Remover barra de rolagem quando colapsado */
+    transition: max-height 0.3s ease-out;
+    margin-top: 10px;
+}
+
+/* Quando o contêiner está expandido */
+#historicoDepositosContainer.expanded {
+    max-height: 200px; /* Ajuste conforme necessário */
+    overflow-y: auto;  /* Exibir barra de rolagem vertical */
+    transition: max-height 0.3s ease-in;
+}
+
+/* Ajuste dos cards gerais */
+.card {
+    max-width: 900px; /* Alinhando a largura máxima com o card do título */
+    margin: 20px auto; /* Centraliza todos os cards na página */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
     width: 100%;
-    max-width: 1000px;
-    border-collapse: collapse;
-    margin: 0 auto;
 }
 
-th, td {
-    border: 1px solid #dee2e6;
-    padding: 15px;
-    text-align: center;
-    font-size: 1.2em;
-    cursor: pointer;
-    background-color: #ffffff;
-    transition: background-color 0.3s ease, color 0.3s ease;
+/* Estilo do ícone de sucesso */
+.success-icon {
+    display: none; /* Ícone oculto por padrão */
+    font-size: 20px;
+    color: green;
+    margin-right: 10px;
 }
 
-td {
-    width: 10%;
-    height: 60px;
-}
-
-td.selected {
-    background-color: #28a745;
-    color: #ffffff;
-    font-weight: bold;
-}
-
-td:hover {
-    background-color: #f1f1f1;
-    transition: background-color 0.2s ease;
-}
-
-/* Tabela no Modo Escuro */
-body.dark-mode th, 
-body.dark-mode td {
-    background-color: #555;
-    border-color: #777;
-}
-
-body.dark-mode td:hover {
-    background-color: #666;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    #total, #mensagem, #data-inicial, #data-final {
-        width: 95%;
-    }
-
-    td {
-        padding: 10px;
-        font-size: 1em;
-    }
-}
-
-/* Canvas para o Gráfico */
-canvas {
-    max-width: 600px;
-    max-height: 400px;
-    width: 100%;
-    height: auto;
-    margin: 0 auto;
-    display: block;
-}
-
-/* Ajustes para o Modo Escuro */
-body.dark-mode canvas {
-    background-color: #222;
+.success-icon.show {
+    display: inline-block; /* Exibir o ícone quando a linha estiver completamente selecionada */
 }

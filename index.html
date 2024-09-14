@@ -4,90 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desafio dos 200 Depósitos</title>
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
-    <script src="js/chart.umd.js"></script>
 </head>
 <body>
 
     <!-- Cabeçalho Principal -->
     <header>
-        <h1>Desafio dos 200 Depósitos</h1>
+        <div class="container">
+            <div class="row valign-wrapper">
+                <div class="col s12">
+                    <h1>Desafio dos 200 Depósitos</h1>
+                </div>
+            </div>
+        </div>
     </header>
 
     <!-- Controle Deslizante para o Limite de Dias -->
-    <section>
-        <label for="dias-limite">Defina o limite de dias para o desafio:</label>
-        <input type="range" id="dias-limite" min="30" max="365" value="100">
-		<span id="dias-limite-valor">100 dias</span> <!-- Exibe o valor do controle deslizante -->
+    <section class="container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Defina o limite de dias para o desafio</span>
+                <input type="range" id="dias-limite" min="30" max="365" value="100" />
+                <span id="dias-limite-valor">100 dias</span>
+            </div>
+        </div>
     </section>
 
     <!-- Mensagem Motivacional -->
-    <section>
-        <p id="mensagem-motivacional" class="mensagem-motivacional"></p>
+    <section class="container">
+        <div class="card">
+            <div class="card-content">
+                <p id="mensagem-motivacional" class="mensagem-motivacional">Mantenha-se motivado!</p>
+            </div>
+        </div>
     </section>
 
-    <!-- Botão para Alternar Modo Escuro -->
-    <section>
-        <button id="dark-mode-toggle" class="btn">Alternar Modo Escuro</button>
-    </section>
-	
-	<!-- Botão para resetar o sistema -->
-	<section>
-		<button id="resetarSistema" class="btn btn-danger">Resetar Sistema</button>
-	</section>
-    
     <!-- Exibição da Probabilidade de Sucesso -->
-    <section>
-        <p id="probabilidade" class="probabilidade-visual">Probabilidade de Sucesso: 0%</p>
+    <section class="container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Probabilidade de Sucesso</span>
+                <p id="probabilidade" class="probabilidade-visual">Probabilidade de Sucesso: 0%</p>
+            </div>
+        </div>
     </section>
 
     <!-- Gráfico de Progresso -->
-    <section>
-        <h2>Progresso do Desafio</h2>
-        <canvas id="progressoGrafico" width="400" height="200"></canvas>
+    <section class="container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Progresso do Desafio</span>
+                <canvas id="progressoGrafico" width="400" height="200"></canvas>
+            </div>
+        </div>
     </section>
 
     <!-- Tabela de Depósitos -->
-    <section class="table-container">
-        <h2>Tabela de Depósitos</h2>
-        <table id="depositos">
-            <!-- A tabela será gerada dinamicamente pelo JavaScript -->
-        </table>
+    <section class="container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Tabela de Depósitos</span>
+                <table id="depositos" class="striped responsive-table">
+                    <!-- A tabela será gerada dinamicamente pelo JavaScript -->
+                </table>
+            </div>
+        </div>
     </section>
 
     <!-- Resumo Financeiro -->
-    <section>
-        <h2>Resumo Financeiro</h2>
-        <p id="total" class="resumo-financeiro">Total Acumulado: R$ 0.00</p>
-        <p id="data-inicial" class="resumo-financeiro"></p>
-        <p id="data-final" class="resumo-financeiro"></p>
-        <p id="mensagem" class="resumo-financeiro"></p>
+    <section class="container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Resumo Financeiro</span>
+                <p id="total" class="resumo-financeiro">Total Acumulado: R$ 0.00</p>
+                <p id="data-inicial" class="resumo-financeiro"></p>
+                <p id="data-final" class="resumo-financeiro"></p>
+                <p id="mensagem" class="resumo-financeiro"></p>
+            </div>
+        </div>
     </section>
 
     <!-- Histórico de Depósitos -->
-    <section>
-        <h2>Histórico de Depósitos</h2>
-        <ul id="historicoDepositos">
-            <!-- Histórico gerado dinamicamente pelo JavaScript -->
-        </ul>
-    </section>
-
-    <!-- Botão para Exportar Progresso -->
-    <section>
-        <button id="exportarCSV" class="btn">Exportar Progresso (CSV)</button>
+    <section class="container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Histórico de Depósitos</span>
+                <button id="toggleHistorico" class="btn blue waves-effect waves-light">Mostrar Histórico</button>
+                <div id="historicoDepositosContainer" class="collapsed">
+                    <ul id="historicoDepositos">
+                        <!-- Histórico gerado dinamicamente pelo JavaScript -->
+                    </ul>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Sugestões de Depósitos Futuros -->
-    <section id="sugestoesDepositosContainer">
-        <h2>Sugestões de Depósitos Futuros</h2>
-        <ul id="sugestoesDepositos">
-            <!-- Sugestões geradas dinamicamente pelo JavaScript -->
-        </ul>
+    <section class="container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Sugestões de Depósitos Futuros</span>
+                <ul id="sugestoesDepositos">
+                    <!-- Sugestões geradas dinamicamente pelo JavaScript -->
+                </ul>
+            </div>
+        </div>
     </section>
 
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!-- Script Principal -->
     <script src="js/chart.umd.js"></script>
-	<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
