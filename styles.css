@@ -75,9 +75,9 @@ table {
 
 th, td {
     border: 1px solid #dee2e6;
-    padding: 15px;
+    padding: 10px;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1em;
     cursor: pointer;
     background-color: #fff;
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -119,12 +119,30 @@ body.dark-mode td:hover {
 /* Responsividade */
 @media (max-width: 768px) {
     td {
-        padding: 10px;
-        font-size: 1em;
+        padding: 8px;
+        font-size: 0.9em;
     }
 
     .probabilidade-visual {
         font-size: 1.2em;
+    }
+
+    table {
+        font-size: 0.9em; /* Reduzir tamanho da fonte */
+        width: 100%;
+    }
+
+    th, td {
+        padding: 8px;
+        min-width: 80px; /* Manter as células pequenas em telas pequenas */
+    }
+
+    .header-container h1 {
+        font-size: 1.8em; /* Reduzir tamanho do título em telas menores */
+    }
+
+    .card {
+        padding: 15px; /* Reduzir o padding dos cards */
     }
 }
 
