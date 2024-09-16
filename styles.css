@@ -72,6 +72,7 @@ table {
     margin: 20px auto;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     table-layout: fixed; /* Definir layout fixo para as células */
+    overflow-x: auto; /* Garantir rolagem horizontal */
 }
 
 th, td {
@@ -122,12 +123,19 @@ body.dark-mode td:hover {
         overflow-x: auto;
         white-space: nowrap;
         font-size: 0.9em; /* Reduzir tamanho da fonte */
+        width: 100%; /* Garantir que a tabela ocupe 100% da largura */
     }
 
     th, td {
         padding: 8px;
         min-width: 60px; /* Definir uma largura mínima para as células */
         white-space: nowrap; /* Evitar quebras de linha nas células */
+        text-align: center; /* Centralizar conteúdo em telas pequenas */
+    }
+
+    .table-container {
+        overflow-x: auto; /* Adicionar rolagem horizontal no contêiner da tabela */
+        margin: 0 auto;
     }
 
     .probabilidade-visual {
