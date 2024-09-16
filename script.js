@@ -62,7 +62,7 @@ function criarTabela() {
     tabela.innerHTML = ''; 
 
     let contador = 1;
-    for (let i = 0; i < 40; i++) { // Criar 40 linhas
+    for (let i = 0; i < 20; i++) { // Criar 40 linhas
         const row = document.createElement('tr'); // Criar linha
 
         // Adicionar ícone de sucesso na primeira célula
@@ -73,7 +73,7 @@ function criarTabela() {
         successIconCell.appendChild(successIcon);
         row.appendChild(successIconCell); // Adicionar a célula do ícone à linha
 
-        for (let j = 0; j < 5; j++) { // Criar 5 células por linha
+        for (let j = 0; j < 10; j++) { // Criar 5 células por linha
             const cell = document.createElement('td');
             cell.textContent = contador;
             cell.dataset.value = contador;
